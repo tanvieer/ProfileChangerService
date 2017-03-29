@@ -7,6 +7,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.AudioManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -24,10 +25,11 @@ public class ProfileService extends IntentService {
      *
      */
     private int counter = 1;
-    public static Thread thrd;
-    public static Thread thrd2;
+    public static Thread controllerThread;
+    public static Thread sensorThread;
     private SensorEventListener sel;
     private SensorManager sm;
+    private AudioManager myAudioManager;
     public static boolean startthread = true;
 
 
@@ -46,6 +48,7 @@ public class ProfileService extends IntentService {
         super.onStart(intent, startId);
         //Toast.makeText(this, "on start ", Toast.LENGTH_SHORT).show();
         Log.d("MYProfileService", "On Start called");
+        myAudioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
 
         final Handler handler = new Handler(){
 
@@ -57,7 +60,7 @@ public class ProfileService extends IntentService {
         };
 
 
-          thrd = new Thread(new Runnable() {
+        controllerThread = new Thread(new Runnable() {
               @Override
             public void run() {
 
@@ -78,13 +81,15 @@ public class ProfileService extends IntentService {
                     }
                   if(!startthread){
                       sm.unregisterListener(sel);
+
+                      Log.d("MYProfileService","Sensor stopped unregisterListener");
                   }
 
 
                 }
             }
         });
-        thrd.start();
+        controllerThread.start();
 
 
 
@@ -93,9 +98,8 @@ public class ProfileService extends IntentService {
         sm=(SensorManager)this.getSystemService(Context.SENSOR_SERVICE);
         Sensor s=sm.getSensorList(Sensor.TYPE_PROXIMITY).get(0);
         sm.registerListener(sel,s,SensorManager.SENSOR_DELAY_NORMAL);
-        //SM.registerListener(this,proximity, SensorManager.SENSOR_DELAY_NORMAL);
 
-        Thread A=new Thread(){
+        sensorThread =new Thread(){
             public void run()
             {
                 sel=new SensorEventListener() {
@@ -105,6 +109,16 @@ public class ProfileService extends IntentService {
                         // TODO Auto-generated method stub
                         double x;
                         x=event.values[0];
+
+                        if(x==0.0){
+                           // myAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+                            myAudioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
+                            Log.d("MYProfileService","vibrate mode on");
+                        }
+                        if(x==1.0){
+                            myAudioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+                            Log.d("MYProfileService","normal mode on");
+                        }
 
                         Log.d("MYProfileService","x="+Double.toString(x));
                     }
@@ -118,15 +132,15 @@ public class ProfileService extends IntentService {
 
             }
         };
-        sm.registerListener(sel,s,SensorManager.SENSOR_DELAY_NORMAL);
-        A.start();
+        sensorThread.start();
         try {
-            A.join();
+            sensorThread.join();
         } catch (InterruptedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        sm.registerListener(sel,s,1000000);
+        sm.registerListener(sel,s,SensorManager.SENSOR_DELAY_NORMAL);
+
     }
 
 
