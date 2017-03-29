@@ -68,12 +68,12 @@ public class LightMode extends Service {
                         // TODO Auto-generated method stub
                         double x;
                         x= (int)event.values[0];
-                        if(x<100 && myAudioManager.getRingerMode() != AudioManager.RINGER_MODE_VIBRATE ){
+                        if(x<5 && myAudioManager.getRingerMode() != AudioManager.RINGER_MODE_VIBRATE ){
                             // myAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
                             myAudioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
                             Log.d(TAG,"vibrate mode on");
                         }
-                        else if ( x>3000 && myAudioManager.getRingerMode() != AudioManager.RINGER_MODE_NORMAL) {
+                        else if ( x>500 && myAudioManager.getRingerMode() != AudioManager.RINGER_MODE_NORMAL) {
                             myAudioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
                             Log.d(TAG,"normal mode on");
                         }

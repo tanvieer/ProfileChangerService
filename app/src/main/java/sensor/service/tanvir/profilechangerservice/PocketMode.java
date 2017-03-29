@@ -11,6 +11,7 @@ import android.media.AudioManager;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.widget.Toast;
 
 /**
  * Created by Tanvir on 29-Mar-17.
@@ -21,6 +22,7 @@ public class PocketMode extends Service {
     public static Thread sensorThread;
     private SensorEventListener sel;
     private SensorManager sm;
+    Sensor s;
     private AudioManager myAudioManager;
     public static boolean startthread = true;
 
@@ -35,7 +37,13 @@ public class PocketMode extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand Called");
+        try{
         ProximityCheckingStart();
+        }
+        catch (Exception e){
+
+        }
+
         return super.onStartCommand(intent, flags, startId);
 
     }
@@ -55,8 +63,14 @@ public class PocketMode extends Service {
         myAudioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
 
         sm=(SensorManager)this.getSystemService(Context.SENSOR_SERVICE);
-        Sensor s=sm.getSensorList(Sensor.TYPE_PROXIMITY).get(0);
-        sm.registerListener(sel,s,SensorManager.SENSOR_DELAY_NORMAL);
+        try {
+            s=sm.getSensorList(Sensor.TYPE_PROXIMITY).get(0);
+            sm.registerListener(sel,s,SensorManager.SENSOR_DELAY_NORMAL);
+        }
+        catch (Exception e){
+            Log.d("SensorNai","Proximity 1");
+        }
+
 
         sensorThread =new Thread(){
             public void run()
@@ -74,7 +88,7 @@ public class PocketMode extends Service {
                             myAudioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
                             Log.d(TAG,"vibrate mode on");
                         }
-                        if(x==1.0){
+                        if(x>=1){
                             myAudioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
                             Log.d(TAG,"normal mode on");
                         }
@@ -91,6 +105,7 @@ public class PocketMode extends Service {
 
             }
         };
+
         sensorThread.start();
         try {
             sensorThread.join();
@@ -98,6 +113,8 @@ public class PocketMode extends Service {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+
         sm.registerListener(sel,s,SensorManager.SENSOR_DELAY_NORMAL);
+
     }
 }
