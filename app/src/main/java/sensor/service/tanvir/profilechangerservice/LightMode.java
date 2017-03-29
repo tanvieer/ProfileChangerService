@@ -35,7 +35,7 @@ public class LightMode extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand Called");
-        ProximityCheckingStart();
+        LightCheckingStart();
         return super.onStartCommand(intent, flags, startId);
 
     }
@@ -51,7 +51,7 @@ public class LightMode extends Service {
 
 
     //==============================ProximitySensor=====================================
-    private void ProximityCheckingStart(){
+    private void LightCheckingStart(){
         myAudioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
 
         sm=(SensorManager)this.getSystemService(Context.SENSOR_SERVICE);
