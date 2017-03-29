@@ -73,7 +73,7 @@ public class LightMode extends Service {
                             myAudioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
                             Log.d(TAG,"vibrate mode on");
                         }
-                        else if ( x>1000 && myAudioManager.getRingerMode() != AudioManager.RINGER_MODE_NORMAL) {
+                        else if ( x>3000 && myAudioManager.getRingerMode() != AudioManager.RINGER_MODE_NORMAL) {
                             myAudioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
                             Log.d(TAG,"normal mode on");
                         }
