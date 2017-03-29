@@ -1,7 +1,12 @@
 package sensor.service.tanvir.profilechangerservice;
 
 import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -20,7 +25,13 @@ public class ProfileService extends IntentService {
      */
     private int counter = 1;
     public static Thread thrd;
+    public static Thread thrd2;
+    private SensorEventListener sel;
+    private SensorManager sm;
     public static boolean startthread = true;
+
+
+
     public ProfileService() {
         super("ProfileChanger");
     }
@@ -47,12 +58,10 @@ public class ProfileService extends IntentService {
 
 
           thrd = new Thread(new Runnable() {
-            @Override
+              @Override
             public void run() {
-                //Toast.makeText(ProfileService.this, "Counter: "+Integer.toString(counter), Toast.LENGTH_SHORT).show();
 
-
-                while (startthread) {
+                      while (startthread) {
                     counter++;
                     Log.d("MYProfileService","Counter: "+Integer.toString(counter));
                     try {
@@ -65,16 +74,71 @@ public class ProfileService extends IntentService {
                     if(counter >100){
                         startthread = false;
                         Log.d("MYProfileService","Thread stopped");
+                        sm.unregisterListener(sel);
                     }
+
                 }
             }
         });
         thrd.start();
        //thrd.stop();
+
+
+
+
+        //==============================Sensor=====================================
+
+        sm=(SensorManager)this.getSystemService(Context.SENSOR_SERVICE);
+        Sensor s=sm.getSensorList(Sensor.TYPE_ACCELEROMETER).get(0);
+        sm.registerListener(sel,s,SensorManager.SENSOR_DELAY_NORMAL);
+        //SM.registerListener(this,proximity, SensorManager.SENSOR_DELAY_NORMAL);
+
+        Thread A=new Thread(){
+            public void run()
+            {
+                sel=new SensorEventListener() {
+
+                    @Override
+                    public void onSensorChanged(SensorEvent event) {
+                        // TODO Auto-generated method stub
+                        double Acceleration,x,y,z;
+                        x=event.values[0];
+                        y=event.values[2];
+                        z=event.values[2];
+                        Acceleration=Math.sqrt(x*x+y*y+z*z);
+                        //db.addAccel(Acceleration);
+                        Log.d("MYProfileService","Acceleration = "+Acceleration);
+                        Log.d("MYProfileService","x="+Double.toString(x)+", y="+Double.toString(y)+", z="+Double.toString(z));
+                    }
+
+                    @Override
+                    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+                        // TODO Auto-generated method stub
+
+                    }
+                };
+
+            }
+        };
+        sm.registerListener(sel,s,SensorManager.SENSOR_DELAY_NORMAL);
+        A.start();
+        try {
+            A.join();
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        sm.registerListener(sel,s,1000000);
     }
 
 
-    //=====================================================================================================================================
+
+
+
+
+
+
+
 
     @Override
     protected void onHandleIntent(Intent intent) {
@@ -158,4 +222,6 @@ public class ProfileService extends IntentService {
     }
 
     */
+
+
 }
