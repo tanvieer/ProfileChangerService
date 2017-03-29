@@ -16,7 +16,9 @@
             </intent-filter>
         </activity>
         <service android:name=".ProfileService"></service>
-        <service android:name=".MyService"></service>
+        <service android:name=".PocketMode"></service>
+        <service android:name=".LightMode"></service>
+        <service android:name=".TableMode"></service>
     </application>
 
 </manifest>

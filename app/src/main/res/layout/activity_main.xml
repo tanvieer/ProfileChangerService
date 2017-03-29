@@ -10,27 +10,52 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="sensor.service.tanvir.profilechangerservice.MainActivity">
 
-    <Button
-        android:text="Start Service"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="117dp"
-        android:layout_marginStart="117dp"
-        android:layout_marginTop="54dp"
-        android:id="@+id/buttonStart"
-        android:onClick="startButton" />
 
-    <Button
-        android:text="Stop Service"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/buttonStart"
-        android:layout_alignLeft="@+id/buttonStart"
-        android:layout_alignStart="@+id/buttonStart"
-        android:layout_marginTop="87dp"
-        android:id="@+id/buttonStop"
-        android:onClick="stopButton" />
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true">
+
+        <Button
+            android:text="Start PocketMode"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/buttonPocket"
+            android:onClick="startPocketMode"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+
+        <Button
+            android:text="Start TableMode"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/buttonTable"
+            android:onClick="startTableMode"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+
+        <Button
+            android:text="Start LightMode"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/buttonLight"
+            android:onClick="startLightMode"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+
+
+        <Button
+            android:text="Stop All Service"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/buttonStop"
+            android:onClick="stopButton"
+            android:layout_alignParentBottom="true"
+            android:layout_alignLeft="@+id/buttonStart"
+            android:layout_alignStart="@+id/buttonStart" />
+
+
+    </LinearLayout>
 </RelativeLayout>

@@ -19,26 +19,63 @@ import static sensor.service.tanvir.profilechangerservice.ProfileService.sensorT
 
 public class MainActivity extends AppCompatActivity {
 
-    private Intent serviceIntent;
+    private Intent _pocketMode;
+    private Intent _tableMode;
+    private Intent _lightMode;
+    ////private Intent pocketModeIntentService;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //serviceIntent = new Intent(this, ProfileService.class);
-        serviceIntent = new Intent(this, MyService.class);
+        ////pocketModeIntentService = new Intent(this, ProfileService.class);
+        _pocketMode = new Intent(this, PocketMode.class);  // proximity
+        _tableMode = new Intent(this, TableMode.class); // Accelerometer
+        _lightMode = new Intent(this, LightMode.class);  // Light
     }
 
-    public void startButton(View v){
-        ProfileService.startthread = true;
-        startService(serviceIntent);
-        Toast.makeText(this, "Service Started", Toast.LENGTH_SHORT).show();
+    public void startPocketMode(View v) throws InterruptedException {
+        ////ProfileService.startthread = true;
+        ////startService(pocketModeIntentService);
+
+        stopAll();
+        Thread.sleep(100);
+
+        startService(_pocketMode);
+        Toast.makeText(this, "Pocket Mode Started", Toast.LENGTH_SHORT).show();
 
     }
+
+    public void startTableMode(View v) throws InterruptedException {
+
+        stopAll();
+        Thread.sleep(100);
+
+        startService(_tableMode);  //Accelerometer   akhono start kori nai
+        Toast.makeText(this, "Table Mode Started", Toast.LENGTH_SHORT).show();
+    }
+
+    public void startLightMode(View v) throws InterruptedException {
+
+        stopAll();
+        Thread.sleep(100);
+
+        startService(_lightMode);
+        Toast.makeText(this, "Light Mode Started", Toast.LENGTH_SHORT).show();
+
+    }
+
     public void stopButton(View v){
-        ProfileService.startthread = false;
-        stopService(serviceIntent);
-        Toast.makeText(this, "Service stoped", Toast.LENGTH_SHORT).show();
+        ////ProfileService.startthread = false;
+        ////stopService(pocketModeIntentService);
+        stopAll();
+        Toast.makeText(this, "ALL Profile Changing Service Stoped", Toast.LENGTH_SHORT).show();
 
+    }
+
+    private void stopAll(){
+        stopService(_pocketMode);
+        stopService(_tableMode);
+        stopService(_lightMode);
     }
 
     @Override
@@ -52,8 +89,5 @@ public class MainActivity extends AppCompatActivity {
         super.onRestart();
         Log.d("LifeCycle","onRestart called");
     }
-
-
-
 
 }

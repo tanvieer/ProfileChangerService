@@ -8,23 +8,16 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.widget.Toast;
-
-import static sensor.service.tanvir.profilechangerservice.ProfileService.sensorThread;
 
 /**
  * Created by Tanvir on 29-Mar-17.
  */
 
-public class MyService extends Service {
-    private static final String TAG = "MyService";
-    private int counter = 1;
-    public static Thread controllerThread;
+public class LightMode extends Service {
+    private static final String TAG = "MyLightMode";
     public static Thread sensorThread;
     private SensorEventListener sel;
     private SensorManager sm;
@@ -42,7 +35,7 @@ public class MyService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand Called");
-        ActionStart();
+        ProximityCheckingStart();
         return super.onStartCommand(intent, flags, startId);
 
     }
@@ -57,87 +50,12 @@ public class MyService extends Service {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    private void ActionStart(){
+    //==============================ProximitySensor=====================================
+    private void ProximityCheckingStart(){
         myAudioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
 
-    /*       final Handler handler = new Handler(){
-
-            @Override
-            public void handleMessage(Message msg){
-                super.handleMessage(msg);
-               // Toast.makeText(MyService.this, "5 sec passed, counter = "+counter, Toast.LENGTH_SHORT).show();
-            }
-        };
-
-
-     controllerThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-                while (startthread) {
-                    counter++;
-                    Log.d(TAG,"Counter: "+Integer.toString(counter));
-                    try {
-                        Thread.sleep(5000);
-                        handler.sendEmptyMessage(0);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
-              *//*      if(counter >100){
-                        startthread = false;
-                        Log.d(TAG,"Thread stopped");
-                        sm.unregisterListener(sel);
-                    }*//*
-                    if(!startthread){
-                        sm.unregisterListener(sel);
-
-                        Log.d(TAG,"Sensor stopped unregisterListener");
-                    }
-
-
-                }
-            }
-        });
-        controllerThread.start();*/
-
-
-
-        //==============================Sensor=====================================
-
         sm=(SensorManager)this.getSystemService(Context.SENSOR_SERVICE);
-        Sensor s=sm.getSensorList(Sensor.TYPE_PROXIMITY).get(0);
+        Sensor s=sm.getSensorList(Sensor.TYPE_LIGHT).get(0);
         sm.registerListener(sel,s,SensorManager.SENSOR_DELAY_NORMAL);
 
         sensorThread =new Thread(){
@@ -149,19 +67,18 @@ public class MyService extends Service {
                     public void onSensorChanged(SensorEvent event) {
                         // TODO Auto-generated method stub
                         double x;
-                        x=event.values[0];
-
-                        if(x==0.0){
+                        x= (int)event.values[0];
+                        if(x<100 && myAudioManager.getRingerMode() != AudioManager.RINGER_MODE_VIBRATE ){
                             // myAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
                             myAudioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
                             Log.d(TAG,"vibrate mode on");
                         }
-                        if(x==1.0){
+                        else if ( x>1000 && myAudioManager.getRingerMode() != AudioManager.RINGER_MODE_NORMAL) {
                             myAudioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
                             Log.d(TAG,"normal mode on");
                         }
 
-                        Log.d(TAG,"x="+Double.toString(x));
+                       Log.d(TAG,"x="+Double.toString(x));
                     }
 
                     @Override
