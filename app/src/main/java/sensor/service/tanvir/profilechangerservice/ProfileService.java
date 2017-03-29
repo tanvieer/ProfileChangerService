@@ -76,20 +76,22 @@ public class ProfileService extends IntentService {
                         Log.d("MYProfileService","Thread stopped");
                         sm.unregisterListener(sel);
                     }
+                  if(!startthread){
+                      sm.unregisterListener(sel);
+                  }
+
 
                 }
             }
         });
         thrd.start();
-       //thrd.stop();
-
 
 
 
         //==============================Sensor=====================================
 
         sm=(SensorManager)this.getSystemService(Context.SENSOR_SERVICE);
-        Sensor s=sm.getSensorList(Sensor.TYPE_ACCELEROMETER).get(0);
+        Sensor s=sm.getSensorList(Sensor.TYPE_PROXIMITY).get(0);
         sm.registerListener(sel,s,SensorManager.SENSOR_DELAY_NORMAL);
         //SM.registerListener(this,proximity, SensorManager.SENSOR_DELAY_NORMAL);
 
@@ -101,14 +103,10 @@ public class ProfileService extends IntentService {
                     @Override
                     public void onSensorChanged(SensorEvent event) {
                         // TODO Auto-generated method stub
-                        double Acceleration,x,y,z;
+                        double x;
                         x=event.values[0];
-                        y=event.values[2];
-                        z=event.values[2];
-                        Acceleration=Math.sqrt(x*x+y*y+z*z);
-                        //db.addAccel(Acceleration);
-                        Log.d("MYProfileService","Acceleration = "+Acceleration);
-                        Log.d("MYProfileService","x="+Double.toString(x)+", y="+Double.toString(y)+", z="+Double.toString(z));
+
+                        Log.d("MYProfileService","x="+Double.toString(x));
                     }
 
                     @Override
@@ -130,13 +128,6 @@ public class ProfileService extends IntentService {
         }
         sm.registerListener(sel,s,1000000);
     }
-
-
-
-
-
-
-
 
 
 
