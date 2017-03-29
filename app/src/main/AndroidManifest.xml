@@ -16,6 +16,7 @@
             </intent-filter>
         </activity>
         <service android:name=".ProfileService"></service>
+        <service android:name=".MyService"></service>
     </application>
 
 </manifest>

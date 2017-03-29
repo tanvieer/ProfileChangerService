@@ -1,6 +1,6 @@
 package sensor.service.tanvir.profilechangerservice;
 
-import android.app.IntentService;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
@@ -15,15 +15,14 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
+import static sensor.service.tanvir.profilechangerservice.ProfileService.sensorThread;
+
 /**
  * Created by Tanvir on 29-Mar-17.
  */
 
-public class ProfileService extends IntentService {
-    /**
-     * Creates an IntentService.  Invoked by your subclass's constructor.
-     *
-     */
+public class MyService extends Service {
+    private static final String TAG = "MyService";
     private int counter = 1;
     public static Thread controllerThread;
     public static Thread sensorThread;
@@ -32,41 +31,81 @@ public class ProfileService extends IntentService {
     private AudioManager myAudioManager;
     public static boolean startthread = true;
 
-    private static final String TAG = "MYProfileService";
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        Log.d(TAG, "onBind Called");
+        return null;
+    }
 
 
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d(TAG, "onStartCommand Called");
+        ActionStart();
+        return super.onStartCommand(intent, flags, startId);
 
-    public ProfileService() {
-        super("ProfileChanger");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        sm.unregisterListener(sel);
+        startthread = false;
+        Log.d(TAG, "On Destroy Called");
     }
 
 
 
 
 
-    //=====================================================================================================================================
-    @Override
-    public void onStart(Intent intent, int startId) {
-        super.onStart(intent, startId);
-        //Toast.makeText(this, "on start ", Toast.LENGTH_SHORT).show();
-        Log.d(TAG, "On Start called");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private void ActionStart(){
         myAudioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
 
-        final Handler handler = new Handler(){
+    /*       final Handler handler = new Handler(){
 
             @Override
             public void handleMessage(Message msg){
                 super.handleMessage(msg);
-                Toast.makeText(ProfileService.this, "5 sec passed, counter = "+counter, Toast.LENGTH_SHORT).show();
+               // Toast.makeText(MyService.this, "5 sec passed, counter = "+counter, Toast.LENGTH_SHORT).show();
             }
         };
 
 
-        controllerThread = new Thread(new Runnable() {
-              @Override
+     controllerThread = new Thread(new Runnable() {
+            @Override
             public void run() {
 
-                      while (startthread) {
+                while (startthread) {
                     counter++;
                     Log.d(TAG,"Counter: "+Integer.toString(counter));
                     try {
@@ -76,22 +115,22 @@ public class ProfileService extends IntentService {
                         e.printStackTrace();
                     }
 
-                    if(counter >100){
+              *//*      if(counter >100){
                         startthread = false;
                         Log.d(TAG,"Thread stopped");
                         sm.unregisterListener(sel);
-                    }
-                  if(!startthread){
-                      sm.unregisterListener(sel);
+                    }*//*
+                    if(!startthread){
+                        sm.unregisterListener(sel);
 
-                      Log.d(TAG,"Sensor stopped unregisterListener");
-                  }
+                        Log.d(TAG,"Sensor stopped unregisterListener");
+                    }
 
 
                 }
             }
         });
-        controllerThread.start();
+        controllerThread.start();*/
 
 
 
@@ -113,7 +152,7 @@ public class ProfileService extends IntentService {
                         x=event.values[0];
 
                         if(x==0.0){
-                           // myAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+                            // myAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
                             myAudioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
                             Log.d(TAG,"vibrate mode on");
                         }
@@ -142,93 +181,5 @@ public class ProfileService extends IntentService {
             e.printStackTrace();
         }
         sm.registerListener(sel,s,SensorManager.SENSOR_DELAY_NORMAL);
-
     }
-
-
-
-    @Override
-    protected void onHandleIntent(Intent intent) {
-        try{
-            //Thread.sleep(5000);
-
-            //Toast.makeText(this, "Counter = " + counter, Toast.LENGTH_SHORT).show();
-            Log.d(TAG,"onHandleIntent Counter = "+Integer.toString(counter));
-           // counter++;
-        }
-        catch (Exception e){
-            Log.d(TAG, "Service exception");
-        }
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-
-
-
-
-
-
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-
-        Log.d(TAG, "On Bind Called");
-        return super.onBind(intent);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.d(TAG, "On Destroy called");
-    }
-
-
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        Log.d(TAG, "On Create called");
-    }
-
-    @Override
-    public void setIntentRedelivery(boolean enabled) {
-        super.setIntentRedelivery(enabled);
-        Log.d(TAG, "setIntentRedelivery called enabled ");
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG, "onStartCommand called ");
-        Toast.makeText(this, "on start command ", Toast.LENGTH_SHORT).show();
-        return super.onStartCommand(intent, flags, startId);
-    }
-
-    */
-
-
 }
